@@ -372,6 +372,7 @@ HELP
   class InstalledXcode
     attr_reader :path
     attr_reader :version
+    attr_reader :bundle_version
     attr_reader :uuid
     attr_reader :downloadable_index_url
     attr_reader :available_simulators
@@ -381,7 +382,11 @@ HELP
     end
 
     def version
-      @version ||= Gem::Version.new(plist_entry(':DTXcode').to_i.to_s.split(//).join('.'))
+      @version ||= get_version
+    end
+
+    def bundle_version
+      @bundle_version ||= Gem::Version.new(plist_entry(':DTXcode').to_i.to_s.split(//).join('.'))
     end
 
     def uuid
@@ -389,7 +394,7 @@ HELP
     end
 
     def downloadable_index_url
-      @downloadable_index_url ||= "https://devimages.apple.com.edgekey.net/downloads/xcode/simulators/index-#{version}-#{uuid}.dvtdownloadableindex"
+      @downloadable_index_url ||= "https://devimages.apple.com.edgekey.net/downloads/xcode/simulators/index-#{bundle_version}-#{uuid}.dvtdownloadableindex"
     end
 
     def approve_license
@@ -413,8 +418,8 @@ HELP
       `/usr/libexec/PlistBuddy -c "Print :#{keypath}" "#{path}/Contents/Info.plist"`.chomp
     end
 
-    def get_version(xcode_path)
-      output = `DEVELOPER_DIR='' "#{xcode_path}/Contents/Developer/usr/bin/xcodebuild" -version`
+    def get_version
+      output = `DEVELOPER_DIR='' "#{@path}/Contents/Developer/usr/bin/xcodebuild" -version`
       return '0.0' if output.nil? # ¯\_(ツ)_/¯
       output.split("\n").first.split(' ')[1]
     end
