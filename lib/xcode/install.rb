@@ -304,11 +304,6 @@ HELP
       result ? dmg_path : nil
     end
 
-    def download
-      result = Curl.new.fetch(source, CACHE_DIR)
-      result ? dmg_path : nil
-    end
-
     def install
       download unless dmg_path.exist?
       prepare_package unless pkg_path.exist?
