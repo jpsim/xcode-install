@@ -315,8 +315,11 @@ HELP
       puts "Please authenticate to install #{name}..."
       `sudo installer -pkg #{pkg_path} -target /`
       fail Informative, "Could not install #{name}, please try again" unless installed?
-      FileUtils.cp("/private/var/db/receipts/#{@identifier}.bom", "#{@install_prefix}/System/Library/Receipts")
-      FileUtils.cp("/private/var/db/receipts/#{@identifier}.plist", "#{@install_prefix}/System/Library/Receipts")
+      source_receipts_dir = '/private/var/db/receipts'
+      target_receipts_dir = "#{@install_prefix}/System/Library/Receipts"
+      FileUtils.mkdir_p(target_receipts_dir)
+      FileUtils.cp("#{source_receipts_dir}/#{@identifier}.bom", target_receipts_dir)
+      FileUtils.cp("#{source_receipts_dir}/#{@identifier}.plist", target_receipts_dir)
       puts "Successfully installed #{name}"
     end
 
